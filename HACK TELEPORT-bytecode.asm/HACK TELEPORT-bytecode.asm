@@ -1,6 +1,3 @@
--- Source: C:\Users\mrxcry\Desktop\Work\protect\crack-tools\HACK TELEPORT.luac
--- Compiler version: 2.1
--- Flags: 0x2
 
 -- Proto #1 -- pos: 0x5, size: 0x188E, fullsize: 0x1890, flags: 0x0, params: 1, framesize: 0x1, numuv: 0, numkgc: 1, numkn: 0, numbc: 1566, ins: 0xF
 0x0000000F | 0000    12:(MOV   )  60  60
