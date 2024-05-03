@@ -1,0 +1,85 @@
+require("lib.sampfuncs")
+require("lib.moonloader")
+
+local var_0_0 = require("lib.samp.events")
+local var_0_1 = require("moonloader").font_flag
+local var_0_2 = renderCreateFont("Century Gothic", 12, var_0_1.BOLD + var_0_1.SHADOW)
+
+function getClosestPlayerId()
+	local var_1_0 = 10
+	local var_1_1 = -1
+	local var_1_2, var_1_3, var_1_4 = getCharCoordinates(PLAYER_PED)
+
+	for iter_1_0 = 0, 999 do
+		local var_1_5, var_1_6 = sampGetCharHandleBySampPlayerId(iter_1_0)
+
+		if var_1_5 and getCharHealth(var_1_6) > 0 then
+			local var_1_7, var_1_8, var_1_9 = getCharCoordinates(var_1_6)
+			local var_1_10 = math.sqrt((var_1_7 - var_1_2)^2 + (var_1_8 - var_1_3)^2 + (var_1_9 - var_1_4)^2)
+
+			if var_1_10 < var_1_0 then
+				var_1_0 = var_1_10
+				var_1_1 = iter_1_0
+			end
+		end
+	end
+
+	return var_1_1
+end
+
+local var_0_3 = false
+local var_0_4 = -1
+
+function main()
+	while not isSampAvailable() do
+		wait(0)
+	end
+
+	sampRegisterChatCommand("rdm", function()
+		var_0_3 = not var_0_3
+
+		sampAddChatMessage("LUA: \xC4\xE0\xEC\xE0\xE3\xE5\xF0 " .. (var_0_3 and "{00CC00}\xE0\xEA\xF2\xE8\xE2\xE8\xF0\xEE\xE2\xE0\xED" or "{CC0000}\xE4\xE5\xE0\xEA\xF2\xE8\xE2\xE8\xF0\xEE\xE2\xE0\xED") .. "{007FFF}.", 32767)
+	end)
+
+	function var_0_0.onSendPlayerSync(arg_4_0)
+		if not var_0_3 then
+			return
+		end
+
+		arg_4_0.keysData = 132
+		arg_4_0.animationId = 1137
+
+		local var_4_0, var_4_1, var_4_2 = getCharCoordinates(PLAYER_PED)
+
+		arg_4_0.position.x = var_4_0 + math.random(-10, 10) / 10
+		arg_4_0.position.y = var_4_1 + math.random(-10, 10) / 10
+	end
+
+	lua_thread.create(function()
+		while true do
+			if var_0_3 then
+				var_0_4 = getClosestPlayerId()
+
+				if sampIsPlayerConnected(var_0_4) then
+					sampSendGiveDamage(var_0_4, 70, 0, 3)
+				end
+			end
+
+			wait(1000)
+		end
+	end)
+	lua_thread.create(function()
+		while true do
+			if var_0_3 then
+				if sampIsPlayerConnected(var_0_4) then
+					renderFontDrawText(var_0_2, "\xCF\xE0\xEA\xE5\xF2 \xF1 \xF3\xF0\xEE\xED\xEE\xEC \xEE\xF2\xEF\xF0\xE0\xE2\xEB\xE5\xED: " .. sampGetPlayerNickname(var_0_4) .. " [ID " .. var_0_4 .. "]", 8, 300, 4278222847)
+				else
+					renderFontDrawText(var_0_2, "\xCF\xEE\xE1\xEB\xE8\xE7\xEE\xF1\xF2\xE8 \xED\xE5\xF2 \xE8\xE3\xF0\xEE\xEA\xEE\xE2", 8, 300, 4278222847)
+				end
+			end
+
+			wait(1)
+		end
+	end)
+	wait(-1)
+end
